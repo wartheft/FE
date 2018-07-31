@@ -11,8 +11,18 @@ namespace FinancialExpress
 
         static void Main(string[] args)
         {
-            DynamicDecorator test = new DynamicDecorator();
-            test.Bob();
+            EmployeeDetails employeeDetails = new EmployeeDetails();
+            Console.WriteLine("New Employee Details added with Employee ID " + employeeDetails.addEmployeeBasicDetails("Hemanth", 31, "Lead Consultant"));
+            Console.WriteLine("New Employee Details added with Employee ID " + employeeDetails.addEmployeeBasicDetails("Kannan", 31, "Senior Consultant"));
+            Console.WriteLine("New Employee Details added with Employee ID " + employeeDetails.addEmployeeBasicDetails("Suresh", 21, "Technical Architect"));
+            employeeDetails.AdditionalDetails.Add("Door No", "21");
+            employeeDetails.AdditionalDetails.Add("Building Name", "Raj Bavan");
+            employeeDetails.AdditionalDetails.Add("Street Name", "MPS Street");
+            employeeDetails.AdditionalDetails.Add("City", "Chennai");
+            employeeDetails.AdditionalDetails.Add("State", "Tamil Nadu");
+            employeeDetails.AdditionalDetails.Add("Country", "India");
+            employeeDetails.addEmployeeAdditionalDetails(2, "Address Details", employeeDetails.AdditionalDetails);
+            employeeDetails.saveEmployeeCollectionToXML();
             Console.ReadLine();
         }
     }

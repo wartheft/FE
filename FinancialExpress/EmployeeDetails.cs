@@ -12,25 +12,32 @@ namespace FinancialExpress
 {
     public class EmployeeDetails
     {
-        private static EmployeeBase _instance;
+        TextWriter filestream = new StreamWriter(@"D:\output.xml");
+        
+        public string strCurrentRootNode, strPreviousRootNode;        
         private Employee _employeeDetails = new Employee();
         private char userChoice = '5';
         //public static List<Employee> EmployeeBaseDetails= new List<Employee>();
-        public static Dictionary<int, Dictionary<string, Dictionary<string, string>>> EmployeeCollection = new Dictionary<int, Dictionary<string, Dictionary<string, string>>>();
+        private Dictionary<string, string> additionalDetails = new Dictionary<string, string>();
+        public Dictionary<string, string> AdditionalDetails { get => additionalDetails; set => additionalDetails = value; }
+        public Dictionary<int, Dictionary<string, Dictionary<string, string>>> EmployeeCollection = new Dictionary<int, Dictionary<string, Dictionary<string, string>>>();
 
-
+        public EmployeeDetails()
+        {
+            EmployeeCollection = new Dictionary<int, Dictionary<string, Dictionary<string, string>>>();
+        }
 
         public int addEmployeeBasicDetails(string EmpName, int EmployeeAge, string EmployeeDesignation)
         {
             //EmployeeBaseDetails.Add(new Employee() { Id = EmployeeBaseDetails.Count() > 0 ? EmployeeBaseDetails.Max(x => x.Id) + 1 : 1, EmpAge = EmployeeAge, EmpName =EmpName, EmpDesignation = EmployeeDesignation });
 
-            EmployeeCollection.Add(EmployeeCollection.Last().Key + 1, new Dictionary<string, Dictionary<string, string>>() { { "Employee Details", new Dictionary<string, string>() { { "Employee Name", EmpName }, { "Employee Age", EmployeeAge.ToString() }, { "Employee Designation", EmployeeDesignation } } } });
+            EmployeeCollection.Add(EmployeeCollection.Count > 0 ? EmployeeCollection.Last().Key + 1 : 1, new Dictionary<string, Dictionary<string, string>>() { { "Employee Details", new Dictionary<string, string>() { { "Employee Name", EmpName }, { "Employee Age", EmployeeAge.ToString() }, { "Employee Designation", EmployeeDesignation } } } });
             Console.WriteLine("Employee Details Added");
             return EmployeeCollection.Last().Key;
         }
         public void addEmployeeAdditionalDetails(int iEmployeeID, string AdditionalDetailsKey, Dictionary<string, string> dicAdditionalDetails)
         {
-            EmployeeCollection[iEmployeeID].Add(AdditionalDetailsKey, dicAdditionalDetails);            
+            EmployeeCollection[iEmployeeID].Add(AdditionalDetailsKey, dicAdditionalDetails);
             Console.WriteLine("Employee Additional Details Added");
         }
         public void DeleteEmployeeDetails(int iEmployeeID)
@@ -48,27 +55,44 @@ namespace FinancialExpress
             EmployeeCollection[iEmployeeID].Remove(AdditionalDetailsKey);
         }
 
-        public void saveEmployeeCollectionToXML(string strPath)
+
+        public void saveEmployeeCollectionToXMLRecursive(Dictionary<string,string> dicSave)
+        {
+
+        }
+
+        public void saveEmployeeCollectionToXML()
         {
             try
             {
-                XmlSerializer serialiser = new XmlSerializer(typeof(List<Employee>));
-                //TextWriter for serializing 
-                TextWriter filestream = new StreamWriter(@"D:\output.xml");
-                //write to the file
-                serialiser.Serialize(filestream, EmployeeCollection);
-                // Close the file
+                XElement myElement = new XElement("Employee Details",new XElement("Test","TestValue"));                
+                foreach (var iEmployee in EmployeeCollection)  //Employee Number
+                {
+                    myElement = new XElement(iEmployee.Key.ToString(), iEmployee.Value);
+                    foreach (var DetailsValue in iEmployee.Value)  //Details String.. .Eg. Employee Number, Adress etc.. 
+                    {
+                        myElement = new XElement(DetailsValue.Key.ToString(), DetailsValue.Value);
+                        foreach (var strDetailsKey in DetailsValue.Value)
+                        {
+                            myElement = new XElement(strDetailsKey.Key.ToString(), strDetailsKey.Value);
+                        }
+                    }
+                    
+                }
+                myElement.Save(filestream);
                 filestream.Close();
-                Console.WriteLine("Converted to XML");
+                Console.WriteLine("Saved to XML");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }           
+            }
         }
 
 
         public char UserChoice { get => userChoice; set => userChoice = value; }
+
+
         //internal Employee EmployeeDetails { get => _employeeDetails; set => _employeeDetails = value; }
 
         public void printMenuHeader(int Count, char printChracter, string strPrintMenuHeader)
@@ -115,7 +139,7 @@ namespace FinancialExpress
                             break;
                         case '3':
                             Console.WriteLine("Enter the Employee ID to Delete Existing Employee");
-                            DeleteEmployeeDetails(Console.ReadLine());
+                            //DeleteEmployeeDetails(Console.ReadLine());
                             break;
                         case '4':
                             Console.WriteLine("Save Employee Details");
@@ -153,14 +177,14 @@ namespace FinancialExpress
 
         }
 
-        
+
         public void ListEmployeeDetails()
         {
             Console.WriteLine("\n \n");
             printMenuHeader(30, '#', "EMPLOYEE LIST");
             Console.WriteLine("\n");
             Console.Write(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|\n", "Employee ID", "Name", "Designation", "Age"));
-            EmployeeCollection.ForEach(i => Console.Write(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|\n", i.Id, i.EmpName, i.EmpDesignation, i.EmpAge)));
+            // EmployeeCollection.ForEach(i => Console.Write(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|\n", i.Id, i.EmpName, i.EmpDesignation, i.EmpAge)));
         }
         public void SaveEmployeeList(string strSaveAs)
         {
@@ -182,7 +206,7 @@ namespace FinancialExpress
             Console.ReadLine();
         }
 
-        
+
 
     }
 
