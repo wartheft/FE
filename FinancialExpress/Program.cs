@@ -22,6 +22,13 @@ namespace FinancialExpress
             employeeDetails.AdditionalDetails.Add("State", "Tamil Nadu");
             employeeDetails.AdditionalDetails.Add("Country", "India");
             employeeDetails.addEmployeeAdditionalDetails(2, "Address Details", employeeDetails.AdditionalDetails);
+            employeeDetails.AdditionalDetails.Clear();
+            employeeDetails.AdditionalDetails.Add("UG", "BE-Cmputer Science");
+            employeeDetails.AdditionalDetails.Add("PG", "MBA-Technology Management");
+            employeeDetails.AdditionalDetails.Add("University", "Anna University");
+            employeeDetails.addEmployeeAdditionalDetails(2, "Qualification", employeeDetails.AdditionalDetails);
+                
+
             employeeDetails.saveEmployeeCollectionToXML();
             Console.ReadLine();
         }
